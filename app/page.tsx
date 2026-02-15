@@ -6,7 +6,7 @@ import 'aos/dist/aos.css';
 
 const DecorativeDivider = () => (
   <div className="relative w-full py-20 flex justify-center" data-aos="fade-in">
-    <div className="w-1/2 h-px bg-gradient-to-r from-transparent via-[#c5a059]/50 to-transparent"></div>
+    
   </div>
 );
 
@@ -179,18 +179,18 @@ export default function Home() {
     margin: '0 auto' 
   }}
 >
-  {/* 1. INVITAȚIA (Index 0 conform cerinței - stă la mijloc) */}
+  {/* 1. INVITAȚIA - Acum mereu opacă (am șters opacity-0 și opacity-100) */}
   <div 
     className={`absolute bg-white shadow-2xl transition-all duration-[1500ms] ease-out
-      ${isOpening ? '-translate-y-[70%] opacity-100' : 'translate-y-0 opacity-0'}`} 
+      ${isOpening ? '-translate-y-[70%]' : 'translate-y-0'}`} 
     style={{ 
       width: '92%',      
       left: '4%', 
       top: '5%',
       height: '90%', 
       border: '1px solid #f0f0f0',
-      // INDEX 0: Stă sub corp, dar peste capacul deschis
       zIndex: 10, 
+      opacity: 1, // Forțăm opacitate maximă mereu
       transitionDelay: isOpening ? '800ms' : '0ms' 
     }}
   >
@@ -208,7 +208,7 @@ export default function Home() {
     </div>
   </div>
 
-  {/* 2. CORPUL PLICULUI (Index +1 - stă mereu în față) */}
+  {/* 2. CORPUL PLICULUI */}
   <div 
     className="absolute inset-0 pointer-events-none"
     style={{ zIndex: 20 }}
@@ -216,14 +216,13 @@ export default function Home() {
     <img src="/plic-corp.png" alt="Plic" className="w-full h-full object-fill opacity-100" />
   </div>
 
-  {/* 3. CAPACUL / CLAPA (Index -1 când e deschis) */}
+  {/* 3. CAPACUL / CLAPA */}
   <div 
     className="absolute top-0 left-0 w-full transition-transform duration-[800ms] ease-in-out origin-top"
     style={{ 
       transform: isOpening ? 'rotateX(-180deg)' : 'rotateX(0deg)', 
       transformStyle: 'preserve-3d',
       height: '55%',
-      // INDEX DINAMIC: 30 când e închis (peste restul), 5 când e deschis (sub restul)
       zIndex: isOpening ? 5 : 30 
     }}
   >
@@ -240,19 +239,18 @@ export default function Home() {
   </div>
 </div>
 
-{/* TEXTUL CU NUMELE - APARE SUB PLIC */}
 <div className={`mt-14 text-center transition-all duration-1000 ${isOpening ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-  <h1 className="font-italianno text-6xl text-[#1a1a1a]">
-    Cătălin <span className="text-[#c5a059] mx-1">&</span> Geanina
-  </h1>
-</div>
-{/* LINIUȚA AURIE SUB NUME */}
-<div className="flex justify-center my-4">
-  <div 
-    className="h-px bg-gradient-to-r from-transparent via-[#c5a059] to-transparent" 
-    style={{ width: '150px' }} 
-  />
-</div>
+              <h1 className="font-italianno text-6xl text-[#1a1a1a]">
+                Cătălin <span className="text-[#c5a059] mx-1">&</span> Geanina
+              </h1>
+              <div className="flex justify-center my-4">
+                <div 
+                  className="h-px bg-gradient-to-r from-transparent via-[#c5a059] to-transparent" 
+                  style={{ width: '150px' }} 
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       ) : (
@@ -319,6 +317,16 @@ export default function Home() {
           </section>
 
           <section className="py-20 px-6 max-w-7xl mx-auto">
+
+<div className="text-center mb-12" data-aos="fade-up">
+  <p className="text-[11px] font-sans font-bold uppercase tracking-[0.4em] text-[#c5a059]">
+    Unde ne vom întâlni
+  </p>
+  <div className="flex justify-center mt-2">
+    <div className="h-px bg-[#c5a059]/30 w-12"></div>
+  </div>
+</div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
               {[
                 { t: "Cununia Civilă", h: "13:00", l: "PONTON LAC, FOREST EVENTS, CUCORĂNI", url: "https://maps.google.com" },
