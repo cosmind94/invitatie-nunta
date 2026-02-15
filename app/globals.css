@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Italianno&family=Inter:wght@300;400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #fdfbf7;
+  background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
+  color: #1a1a1a;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+.font-italianno {
+  font-family: 'Italianno', cursive;
+}
+
+.sparkle {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 8px 2px white;
+  pointer-events: none;
+}
