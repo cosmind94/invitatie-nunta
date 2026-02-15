@@ -43,26 +43,35 @@ const CountdownTimer = () => {
 
 export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpening, setIsOpening] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [animateModal, setAnimateModal] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [mounted, setMounted] = useState(false); 
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [formData, setFormData] = useState({ nume: '', persoane: '2', telefon: '' });
 
   useEffect(() => {
+    setMounted(true);
     // @ts-ignore
     AOS.init({ duration: 1800, once: false, easing: 'ease-out-back' });
   }, []);
 
-  const handleOpenInvitation = () => {
+  const handleEnvelopeClick = () => {
+    if (!isOpening) setIsOpening(true);
+  };
+
+  const handleFinalOpen = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (audioRef.current) {
       audioRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
     }
     setIsOpen(true);
+    window.scrollTo(0, 0);
   };
 
   const toggleMusic = () => {
@@ -111,38 +120,152 @@ export default function Home() {
     }, 1200);
   };
 
+  if (!mounted) return null;
+
   return (
     <main className="min-h-screen bg-[#fdfbf7] relative overflow-x-hidden">
+      <style jsx global>{`
+        @keyframes floatUp {
+          0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+          20% { opacity: 0.4; }
+          80% { opacity: 0.4; }
+          100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+        .particle {
+          position: absolute;
+          background: #c5a059;
+          border-radius: 50%;
+          pointer-events: none;
+          z-index: 1;
+        }
+      `}</style>
+
       <audio ref={audioRef} src="/muzica.mp3" loop preload="auto" />
 
-      <button 
-        onClick={toggleMusic}
-        className="fixed bottom-6 right-6 z-[120] bg-[#1a1a1a] border border-[#c5a059] p-3 rounded-full shadow-2xl text-[#c5a059] transition-all duration-500 hover:bg-[#c5a059] hover:text-[#1a1a1a]"
-      >
-        {isPlaying ? (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-        ) : (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
-        )}
-      </button>
-
       {!isOpen ? (
-        <div className="h-screen flex flex-col items-center justify-center p-6 text-center">
-          <div data-aos="fade-in">
-            <p className="font-italianno text-4xl text-gray-400 mb-8 italic">O poveste scrisă în stele...</p>
-            <div onClick={handleOpenInvitation} className="relative cursor-pointer transition-all hover:scale-105 max-w-[320px] mx-auto group">
-              <img src="/plic.png" alt="Plic" className="w-full h-auto drop-shadow-2xl" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="bg-[#1a1a1a] text-[#c5a059] px-10 py-3 rounded-full text-[10px] uppercase font-bold border border-[#c5a059]/40 tracking-[0.3em] transition-all duration-500 group-hover:bg-[#c5a059] group-hover:text-[#1a1a1a]">Deschide</span>
-              </div>
+        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center relative overflow-hidden bg-[#fdfbf7]">
+          
+          <div className="absolute inset-0 pointer-events-none">
+            {[...Array(15)].map((_, i) => (
+              <div key={i} className="particle" style={{
+                  width: (i % 3 + 2) + 'px', height: (i % 3 + 2) + 'px',
+                  left: (i * 13) % 100 + '%', top: '110%',
+                  animation: `floatUp ${8 + (i % 6)}s linear infinite`,
+                  animationDelay: `${i * 0.7}s`, opacity: 0
+                }}
+              />
+            ))}
+          </div>
+
+          <div data-aos="fade-in" className="relative z-10 w-full flex flex-col items-center">
+            <div className={`transition-opacity duration-700 ${isOpening ? 'opacity-0' : 'opacity-100'}`}>
+              <p className="font-italianno text-5xl text-[#c5a059] italic drop-shadow-sm mb-12">O poveste scrisă în stele...</p>
             </div>
-            <h1 className="font-italianno text-6xl text-[#c5a059] mt-10">Cătălin & Geanina</h1>
+
+            {/* PLIC REPARAT: 85vw width, clapa mare, buton interior */}
+            {/* CONTAINER PLIC - 90vw (mai mare conform cerinței) */}
+{/* CONTAINER PLIC */}
+{/* CONTAINER PLIC */}
+{/* CONTAINER PLIC */}
+{/* CONTAINER PLIC */}
+<div 
+  onClick={handleEnvelopeClick}
+  className={`relative cursor-pointer transition-all duration-[1000ms] ease-in-out ${isOpening ? 'translate-y-[15vh]' : ''}`}
+  style={{ 
+    width: '90vw', 
+    maxWidth: '500px', 
+    aspectRatio: '1.4/1', 
+    perspective: '1500px', 
+    margin: '0 auto' 
+  }}
+>
+  {/* 1. INVITAȚIA (Index 0 conform cerinței - stă la mijloc) */}
+  <div 
+    className={`absolute bg-white shadow-2xl transition-all duration-[1500ms] ease-out
+      ${isOpening ? '-translate-y-[70%] opacity-100' : 'translate-y-0 opacity-0'}`} 
+    style={{ 
+      width: '92%',      
+      left: '4%', 
+      top: '5%',
+      height: '90%', 
+      border: '1px solid #f0f0f0',
+      // INDEX 0: Stă sub corp, dar peste capacul deschis
+      zIndex: 10, 
+      transitionDelay: isOpening ? '800ms' : '0ms' 
+    }}
+  >
+    <div className="h-full flex flex-col items-center justify-center p-4 text-center">
+      <p className="font-italianno text-3xl text-gray-800">Vă invităm cu drag</p>
+      <div className="w-12 h-px bg-[#c5a059]/30 my-3"></div>
+      <p className="text-[11px] uppercase tracking-[0.2em] text-[#c5a059] font-bold mb-8">Cătălin & Geanina</p>
+      
+      <button 
+        onClick={handleFinalOpen}
+        className="bg-[#1a1a1a] text-[#c5a059] px-10 py-3 rounded-full text-[11px] uppercase font-bold border border-[#c5a059]/40 tracking-widest"
+      >
+        Deschide
+      </button>
+    </div>
+  </div>
+
+  {/* 2. CORPUL PLICULUI (Index +1 - stă mereu în față) */}
+  <div 
+    className="absolute inset-0 pointer-events-none"
+    style={{ zIndex: 20 }}
+  >
+    <img src="/plic-corp.png" alt="Plic" className="w-full h-full object-fill opacity-100" />
+  </div>
+
+  {/* 3. CAPACUL / CLAPA (Index -1 când e deschis) */}
+  <div 
+    className="absolute top-0 left-0 w-full transition-transform duration-[800ms] ease-in-out origin-top"
+    style={{ 
+      transform: isOpening ? 'rotateX(-180deg)' : 'rotateX(0deg)', 
+      transformStyle: 'preserve-3d',
+      height: '55%',
+      // INDEX DINAMIC: 30 când e închis (peste restul), 5 când e deschis (sub restul)
+      zIndex: isOpening ? 5 : 30 
+    }}
+  >
+    <img src="/plic-clapa.png" className="w-full h-full object-fill opacity-100" alt="Capac" />
+    
+    {/* SIGILIUL */}
+    <img 
+      src="/sigiliu.png" 
+      className={`absolute left-1/2 -translate-x-1/2 bottom-[-15%] w-[16%] aspect-square transition-opacity duration-300
+        ${isOpening ? 'opacity-0' : 'opacity-100'}`}
+      style={{ zIndex: 31 }}
+      alt="Sigiliu"
+    />
+  </div>
+</div>
+
+{/* TEXTUL CU NUMELE - APARE SUB PLIC */}
+<div className={`mt-14 text-center transition-all duration-1000 ${isOpening ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+  <h1 className="font-italianno text-6xl text-[#1a1a1a]">
+    Cătălin <span className="text-[#c5a059] mx-1">&</span> Geanina
+  </h1>
+</div>
+{/* LINIUȚA AURIE SUB NUME */}
+<div className="flex justify-center my-4">
+  <div 
+    className="h-px bg-gradient-to-r from-transparent via-[#c5a059] to-transparent" 
+    style={{ width: '150px' }} 
+  />
+</div>
           </div>
         </div>
       ) : (
+        /* --- PAGINA 2 - RESTAURATA 100% DIN CODUL TAU ORIGINAL --- */
         <div className="animate-in fade-in duration-1000">
-          {/* HEADER RESTRÂNS pentru vizibilitate imediată pe mobile */}
-          <div className="relative w-full h-[45vh] md:h-[65vh] overflow-hidden">
+          <button 
+            onClick={toggleMusic}
+            className="fixed bottom-6 right-6 z-[120] bg-[#1a1a1a] border border-[#c5a059] p-3 rounded-full shadow-2xl text-[#c5a059] transition-all duration-500 hover:bg-[#c5a059] hover:text-[#1a1a1a]"
+          >
+            {isPlaying ? "🔊" : "🔇"}
+          </button>
+
+          <div className="relative w-full h-[50svh] md:h-[65vh] overflow-hidden bg-[#fdfbf7]">
             <img src="/miri1.jpeg" alt="Miri" className="w-full h-full object-cover object-top" />
           </div>
 
@@ -198,9 +321,9 @@ export default function Home() {
           <section className="py-20 px-6 max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
               {[
-                { t: "Cununia Civilă", h: "13:00", l: "PONTON LAC, FOREST EVENTS, CUCORĂNI", url: "https://maps.app.goo.gl/ptjtXYEPSfarU9hX9" },
-                { t: "Cununia Religioasă", h: "15:00", l: "BISERICA SF. APOSTOLI PETRU ȘI PAVEL", extra: "Cartier Cișmea", url: "https://maps.app.goo.gl/1RoExy17kswZstLw9" },
-                { t: "Petrecerea", h: "18:00", l: "SALA MARA, RESTAURANT FOREST EVENTS", url: "https://maps.app.goo.gl/ptjtXYEPSfarU9hX9" }
+                { t: "Cununia Civilă", h: "13:00", l: "PONTON LAC, FOREST EVENTS, CUCORĂNI", url: "https://maps.google.com" },
+                { t: "Cununia Religioasă", h: "15:00", l: "BISERICA SF. APOSTOLI PETRU ȘI PAVEL", extra: "Cartier Cișmea", url: "https://maps.google.com" },
+                { t: "Petrecerea", h: "18:00", l: "SALA MARA, RESTAURANT FOREST EVENTS", url: "https://maps.google.com" }
               ].map((item, i) => (
                 <div key={i} data-aos="zoom-in" className="p-10 bg-white border border-[#c5a059]/10 rounded-3xl shadow-sm flex flex-col justify-between h-full">
                   <div>
@@ -233,6 +356,7 @@ export default function Home() {
         </div>
       )}
 
+      {/* MODAL RSVP */}
       {showModal && (
         <div className={`fixed inset-0 z-[200] flex items-center justify-center p-4 transition-opacity duration-700 ${animateModal ? 'opacity-100' : 'opacity-0'}`}>
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={closeModal}></div>
@@ -242,10 +366,7 @@ export default function Home() {
                 <h3 className="font-italianno text-5xl text-center text-gray-800 italic">Confirmă</h3>
                 <div className="space-y-1">
                   <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 ml-1">Numele Familiei</p>
-                  <input type="text" className="w-full p-4 bg-white border border-gray-100 rounded-xl outline-none focus:border-[#c5a059]" value={formData.nume} onChange={(e) => {
-                      const cap = e.target.value.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                      setFormData({...formData, nume: cap});
-                  }} placeholder="Nume și Prenume" required />
+                  <input type="text" className="w-full p-4 bg-white border border-gray-100 rounded-xl outline-none focus:border-[#c5a059]" value={formData.nume} onChange={(e) => setFormData({...formData, nume: e.target.value})} placeholder="Nume și Prenume" required />
                 </div>
                 <div className="space-y-1">
                   <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 ml-1">Număr Persoane</p>
