@@ -386,10 +386,11 @@ const handleOpenInvitation = (e: React.MouseEvent) => {
 <section className="w-full px-6 mb-0" data-aos="fade-up">
   <div className="max-w-5xl mx-auto overflow-hidden rounded-3xl shadow-lg">
     <img 
-      src="/miri2.jpeg" 
-      alt="Miri" 
-      className="w-full h-auto grayscale hover:grayscale-0 transition-all duration-1000 ease-in-out"
-    />
+  src="/miri2.jpeg" 
+  alt="Miri"
+  className="w-full h-[400px] object-cover rounded-lg shadow-md" 
+  /* object-cover previne deformarea prin tăierea marginilor, nu prin strivire */
+/>
   </div>
 </section>
 
