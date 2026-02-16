@@ -25,3 +25,14 @@ body {
   box-shadow: 0 0 8px 2px white;
   pointer-events: none;
 }
+
+/* Adaugă asta pentru a ajuta randarea 3D pe mobil */
+.preserve-3d {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
