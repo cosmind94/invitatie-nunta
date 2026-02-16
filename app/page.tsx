@@ -183,7 +183,7 @@ const handleOpenInvitation = (e: React.MouseEvent) => {
         }
       `}</style>
 
-      <audio ref={audioRef} src="/muzica.mp3" loop preload="auto" />
+      <audio ref={audioRef} src="/music.mp3" loop preload="auto" />
 
       {!isOpen ? (
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center relative overflow-hidden bg-[#fdfbf7]">
