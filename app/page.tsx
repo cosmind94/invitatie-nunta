@@ -3,6 +3,11 @@ import { useState, useEffect, useRef } from 'react';
 // @ts-ignore
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { ScrollText, Church, Wine } from 'lucide-react';
+import 'aos/dist/aos.css';
+
+// ADAGĂ ACEASTA CONSTANTĂ AICI:
+const PARTICLES = Array.from({ length: 25 });
 
 const DecorativeDivider = () => (
   <div className="relative w-full py-16 flex justify-center" data-aos="fade-in">
@@ -52,14 +57,28 @@ export default function Home() {
   const [phoneError, setPhoneError] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [mounted, setMounted] = useState(false); 
-  
+  const handleNameChange = (val: string) => {
+    const formatted = val
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+    setFormData({ ...formData, nume: formatted });
+  };
   const audioRef = useRef<HTMLAudioElement | null>(null);
  const [formData, setFormData] = useState({ nume: '', persoane: '2', telefon: '', status: 'prezent' });
 
-  useEffect(() => {
+  // Caută linia:
+useEffect(() => {
     setMounted(true);
     // @ts-ignore
     AOS.init({ duration: 1800, once: false, easing: 'ease-out-back' });
+  }, []);
+
+// ÎNLOCUIEȘTE CU ACEASTA (pentru performanță maximă pe mobil):
+useEffect(() => {
+    setMounted(true);
+    // @ts-ignore
+    AOS.init({ duration: 1200, once: true, easing: 'ease-out-cubic' });
   }, []);
 
   // Funcția care doar deschide plicul (clapa)
@@ -81,13 +100,7 @@ const handleOpenInvitation = (e: React.MouseEvent) => {
     window.scrollTo(0, 0);
   };
 
-  const toggleMusic = () => {
-    if (audioRef.current) {
-      if (isPlaying) { audioRef.current.pause(); } 
-      else { audioRef.current.play(); }
-      setIsPlaying(!isPlaying);
-    }
-  };
+  
 
   const openModal = () => { 
     setShowModal(true); 
@@ -190,7 +203,7 @@ const handleOpenInvitation = (e: React.MouseEvent) => {
           
           <div className="absolute inset-0 pointer-events-none">
   {/* Am crescut de la 15 la 25 de particule pentru acel extra de 10% și densitate vizibilă */}
-  {[...Array(25)].map((_, i) => (
+  {PARTICLES.map((_, i) => (
     <div key={i} className="particle" style={{
         width: (i % 3 + 2) + 'px', 
         height: (i % 3 + 2) + 'px',
@@ -211,8 +224,9 @@ const handleOpenInvitation = (e: React.MouseEvent) => {
 
             <div 
   onClick={handleEnvelopeClick}
-  className={`relative cursor-pointer transition-all duration-[1500ms] ease-in-out ${isOpening ? 'translate-y-[15vh]' : ''}`}
+  className={`relative cursor-pointer duration-[1500ms] ease-in-out ${isOpening ? 'translate-y-[15vh]' : ''}`}
   style={{ 
+    transitionProperty: 'transform, opacity',
     width: '90vw', 
     maxWidth: '500px', 
     aspectRatio: '1.4/1', 
@@ -246,13 +260,16 @@ const handleOpenInvitation = (e: React.MouseEvent) => {
               <div 
   className="absolute top-0 left-0 w-full origin-top"
   style={{ 
-    transform: isOpening ? 'rotateX(180deg)' : 'rotateX(0deg)', 
-    transition: 'transform 1400ms ease-in-out',
-    transformStyle: 'preserve-3d', 
-    WebkitTransformStyle: 'preserve-3d',
-    height: '55%', 
-    zIndex: isOpening ? 5 : 30
-  }}
+  transform: isOpening ? 'rotateX(180deg)' : 'rotateX(0.01deg)', // 0.01 în loc de 0 forțează GPU-ul să stea treaz
+  transition: 'transform 1400ms ease-in-out',
+  transformStyle: 'preserve-3d', 
+  WebkitTransformStyle: 'preserve-3d',
+  backfaceVisibility: 'hidden',
+  WebkitBackfaceVisibility: 'hidden',
+  willChange: 'transform', // Anunță browserul că urmează o mișcare
+  height: '55%', 
+  zIndex: isOpening ? 5 : 30
+}}
 >
   {/* FAȚA (0-90 grade) */}
   <div 
@@ -311,9 +328,15 @@ const handleOpenInvitation = (e: React.MouseEvent) => {
       ) : (
         <div className="animate-in fade-in duration-1000">
           
-          <div className="relative w-full h-[50svh] md:h-[65vh] overflow-hidden bg-[#fdfbf7]">
-            <img src="/miri1.jpeg" alt="Miri" className="w-full h-full object-cover object-top" />
-          </div>
+          <div className="w-full max-w-2xl mx-auto">
+  <img 
+    src="/miri1.jpeg"
+    alt="Miri"
+    loading="lazy"
+    decoding="async"
+    className="w-full h-[450px] md:h-[600px] object-cover object-top rounded-none md:rounded-2xl shadow-lg grayscale transition-all duration-700 hover:grayscale-0" 
+  />
+</div>
           <section className="relative z-10 bg-[#fdfbf7] -mt-16 text-center pb-10">
             <div className="px-6 pt-12">
               <h1 className="font-italianno text-7xl md:text-8xl text-[#1a1a1a] leading-[1.1] md:leading-none mb-4 italic" data-aos="fade-up">
@@ -359,39 +382,67 @@ const handleOpenInvitation = (e: React.MouseEvent) => {
               <p className="text-[11px] font-sans font-bold uppercase tracking-[0.4em] text-[#c5a059]">Unde ne vom întâlni</p>
               <div className="flex justify-center mt-2"><div className="h-px bg-[#c5a059]/30 w-12"></div></div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
-              {[
-                { t: "Cununia Civilă", h: "13:00", l: "PONTON LAC, FOREST EVENTS, CUCORĂNI", url: "https://maps.app.goo.gl/tcgwnEeBQHGVcSX48" },
-                { t: "Cununia Religioasă", h: "15:00", l: "BISERICA SF. APOSTOLI PETRU ȘI PAVEL", extra: "Cartier Cișmea", url: "https://maps.app.goo.gl/9FLhWNRffKfG1yNv8" },
-                { t: "Petrecerea", h: "18:00", l: "SALA MARA, RESTAURANT FOREST EVENTS", url: "https://maps.app.goo.gl/tcgwnEeBQHGVcSX48" }
-              ].map((item, i) => (
-                <div key={i} data-aos="zoom-in" className="p-10 bg-white border border-[#c5a059]/10 rounded-3xl shadow-sm flex flex-col justify-between h-full">
-                  <div>
-                    <h3 className="text-[#c5a059] uppercase text-[10px] mb-6 font-bold tracking-[0.2em]">{item.t}</h3>
-                    <p className="font-italianno text-6xl mb-4 text-gray-700">{item.h}</p>
-                    <p className="text-[11px] uppercase text-gray-700 italic leading-relaxed">{item.l}</p>
-                    {item.extra && <p className="text-[11px] uppercase text-gray-700 italic mt-1 font-normal">{item.extra}</p>}
-                  </div>
-                  <div className="mt-10">
-                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-bold border-b border-[#c5a059]/30 pb-1 text-[#c5a059] uppercase tracking-widest transition-all hover:text-[#1a1a1a]">Vezi pe hartă</a>
-                  </div>
-                </div>
-              ))}
-            </div>
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center relative z-10">
+  {[
+    { 
+      Icon: ScrollText, 
+      t: "Cununia Civilă", 
+      h: "13:00", 
+      l: "PONTON LAC, FOREST EVENTS, CUCORĂNI", 
+      url: "https://maps.app.goo.gl/cWCNutqVqwYdz5vd8" 
+    },
+    { 
+      Icon: Church, 
+      t: "Cununia Religioasă", 
+      h: "15:00", 
+      l: "BISERICA SF. APOSTOLI PETRU ȘI PAVEL", 
+      extra: "Cartier Cișmea", 
+      url: "https://maps.app.goo.gl/cxz9wm7cTpGGmR3Q6" 
+    },
+    { 
+      Icon: Wine, // Aici am pus Wine pentru petrecere
+      t: "Petrecerea", 
+      h: "18:00", 
+      l: "SALA MARA, RESTAURANT FOREST EVENTS", 
+      url: "https://maps.app.goo.gl/cWCNutqVqwYdz5vd8" 
+    }
+  ].map((item, i) => (
+    <div key={i} data-aos="zoom-in" className="p-8 bg-white/80 backdrop-blur-sm border border-[#c5a059]/20 rounded-[2rem] shadow-sm flex flex-col items-center h-full">
+      
+      {/* CERCUL: l-am făcut mai mic (w-12 h-12) și mai transparent (opacity-50) */}
+      <div className="w-12 h-12 rounded-full border border-[#c5a059]/30 flex items-center justify-center mb-6 bg-[#c5a059]/5 opacity-50">
+        {/* ICONIȚA: w-5 h-5 (cu 50% mai mică decât înainte) */}
+        <item.Icon className="w-5 h-5 text-[#c5a059]" strokeWidth={1.2} />
+      </div>
+
+      <h3 className="text-[#c5a059] uppercase text-[11px] mb-4 font-bold tracking-[0.2em]">{item.t}</h3>
+      <p className="font-italianno text-6xl mb-4 text-gray-800">{item.h}</p>
+      <p className="text-[11px] uppercase text-gray-600 font-medium leading-relaxed px-4">{item.l}</p>
+      {item.extra && <p className="text-[11px] uppercase text-gray-400 italic mt-1">{item.extra}</p>}
+      
+      <div className="mt-auto pt-8">
+        <a href={item.url} target="_blank" rel="noopener noreferrer" className="inline-block text-[10px] font-bold border-b-2 border-[#c5a059]/30 pb-1 text-[#c5a059] uppercase tracking-widest hover:border-[#c5a059]">
+          Vezi pe hartă
+        </a>
+      </div>
+    </div>
+  ))}
+</div>
           </section>
 
           <DecorativeDivider />
 
 {/* SECTIUNE POZA NOUA ALB-NEGRU */}
 <section className="w-full px-6 mb-0" data-aos="fade-up">
-  <div className="max-w-5xl mx-auto overflow-hidden rounded-3xl shadow-lg">
-    <img 
-  src="/miri2.jpeg" 
-  alt="Miri"
-  className="w-full h-[400px] object-cover rounded-lg shadow-md" 
-  /* object-cover previne deformarea prin tăierea marginilor, nu prin strivire */
-/>
-  </div>
+  <div className="w-full max-w-2xl mx-auto px-4 md:px-0">
+  <img 
+    src="/miri2.jpeg" 
+    alt="Miri"
+    loading="lazy"
+    decoding="async"
+    className="w-full h-[450px] md:h-[600px] object-cover object-top rounded-2xl shadow-lg grayscale transition-all duration-700 hover:grayscale-0" 
+  />
+</div>
 </section>
 
 
@@ -405,9 +456,9 @@ const handleOpenInvitation = (e: React.MouseEvent) => {
               </div>
               <button onClick={openModal} className="bg-[#1a1a1a] text-[#c5a059] border border-[#c5a059]/30 px-12 py-4 rounded-lg text-[11px] uppercase font-bold tracking-[0.3em] shadow-xl transition-all duration-500 hover:bg-[#c5a059] hover:text-[#1a1a1a]">Confirmă prezența</button>
             </div>
-            <footer className="pt-32 pb-10">
-                <p className="font-italianno text-5xl text-[#c5a059] italic" data-aos="fade-up">Vă așteptăm cu drag!</p>
-            </footer>
+            <footer className="pt-32 pb-24 md:pb-10 relative z-10">
+    <p className="font-italianno text-5xl text-[#c5a059] italic">Vă așteptăm cu drag!</p>
+</footer>
           </section>
         </div>
       )}
@@ -421,7 +472,17 @@ const handleOpenInvitation = (e: React.MouseEvent) => {
                 <h3 className="font-italianno text-5xl text-center text-gray-800 italic">Confirmă</h3>
                 <div className="space-y-1">
                   <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 ml-1">Numele Familiei</p>
-                  <input type="text" className="w-full p-4 bg-white border border-gray-100 rounded-xl outline-none focus:border-[#c5a059]" value={formData.nume} onChange={(e) => setFormData({...formData, nume: e.target.value})} placeholder="Nume și Prenume" required />
+                  <input 
+  type="text" 
+  className="w-full p-4 bg-white border border-gray-100 rounded-xl outline-none focus:border-[#c5a059]" 
+  value={formData.nume} 
+  onChange={(e) => handleNameChange(e.target.value)} 
+  autoCapitalize="words" 
+  autoComplete="name"
+  spellCheck="false"
+  placeholder="Nume și Prenume" 
+  required 
+/>
                 </div>
                 {/* AFISĂM NR. PERSOANE DOAR DACĂ STATUSUL ESTE 'PREZENT' */}
 {formData.status === 'prezent' && (
