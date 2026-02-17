@@ -241,7 +241,7 @@ const handleOpenInvitation = (e: React.MouseEvent) => {
                 style={{ width: '92%', left: '4%', top: '5%', height: '90%', border: '1px solid #f0f0f0', zIndex: 10, opacity: 1, transitionDelay: isOpening ? '1200ms' : '0ms' }}
               >
                 <div className="h-full flex flex-col items-center justify-center p-4 text-center">
-                  <p className="font-italianno text-3xl text-gray-800">Vă invităm cu drag</p>
+                  <p className="font-italianno text-3xl text-gray-800">Vă invităm cu drag!</p>
                   <div className="w-12 h-px bg-[#c5a059]/30 my-3"></div>
                   <p className="text-[11px] uppercase tracking-[0.2em] text-[#c5a059] font-bold mb-8">Cătălin & Geanina</p>
                   <button
@@ -289,7 +289,7 @@ const handleOpenInvitation = (e: React.MouseEvent) => {
       <div className="absolute inset-0 flex items-center justify-center pb-8">
         <div style={{ width: '80%' }} className="text-center">
           <span className="font-italianno text-[#c5a059] text-2xl md:text-4xl italic drop-shadow-md">
-            Apasă pentru a vedea invitația
+            Apasă pentru a vedea invitația!
           </span>
         </div>
       </div>
